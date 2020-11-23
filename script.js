@@ -364,15 +364,15 @@ window.addEventListener("DOMContentLoaded", () => {
             const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
 
             const commands = {
-                "добавить скважину": skw_id => (this.well_manager.AddWell(parseInt(skw_id, 10))),
-                "выбрать скважину": skw_id => (this.well_manager.SetActiveWellId(parseInt(skw_id, 10))),
-                "удалить скважину": skw_id => (this.well_manager.RemoveWell(parseInt(skw_id, 10))),
-                "добавить оборудование": equip_type => (this.well_manager.AddEquip(equip_type, 0, 0)),
-                "выбрать оборудование": equip_no => (this.well_manager.SetActiveEquipment(parseInt(equip_no, 10))),
-                "удалить оборудование": equip_no => (this.well_manager.RemoveEquip(parseInt(equip_no, 10))),
-                "тип оборудования": equip_type => (this.well_manager.Change_EquipType(equip_type)),
-                "вес оборудования": weight => (this.well_manager.Change_Weight(parseFloat(weight.replace(' ', '').replace(',', '.')))),
-                "количество оборудования": quantity => (this.well_manager.Change_Quantity(parseInt(quantity, 10))),
+                "добавить скважину": skw_id => { if (skw_id != null) this.well_manager.AddWell(parseInt(skw_id, 10))},
+                "выбрать скважину": skw_id => { if (skw_id != null) this.well_manager.SetActiveWellId(parseInt(skw_id, 10))},
+                "удалить скважину": skw_id => { if (skw_id != null) this.well_manager.RemoveWell(parseInt(skw_id, 10))},
+                "добавить оборудование": equip_type => { if (equip_type != null) this.well_manager.AddEquip(equip_type, 0, 0)},
+                "выбрать оборудование": equip_no => { if (equip_no != null) this.well_manager.SetActiveEquipment(parseInt(equip_no, 10))},
+                "удалить оборудование": equip_no => { if (equip_no != null) this.well_manager.RemoveEquip(parseInt(equip_no, 10))},
+                "тип оборудования": equip_type => { if (equip_type != null) this.well_manager.Change_EquipType(equip_type)},
+                "вес оборудования": weight => { if (weight != null) this.well_manager.Change_Weight(parseFloat(weight.replace(' ', '').replace(',', '.')))},
+                "количество оборудования": quantity => { if (quantity != null) this.well_manager.Change_Quantity(parseInt(quantity, 10))},
                 "добавить информацию": () => {
                     this.LongSpeechMode = true;
                     this.recognition.interimResults = true;
@@ -390,7 +390,12 @@ window.addEventListener("DOMContentLoaded", () => {
                 "go to": destination => navigateTo(destination)
             };
 
-            const reset_cmd = () => (this.listening ? this.recognition.start() : null);
+            const reset_cmd = () => {
+				if(this.listening){
+					this.recognition.abort();
+					this.recognition.start();
+				}
+			}
 
 
             if (typeof SpeechRecognition !== "undefined") {
@@ -511,7 +516,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
                 this.recognition.onerror = function(event) {
 
-                    console.log('SpeechRecognition.onerror' + event.error);
+                    console.log('SpeechRecognition.onerror ' + event.error);
+					this.microphone_status.innerHTML = "Ошибка: " + event.error;
                 }
 
                 this.recognition.onaudiostart = function(event) {
