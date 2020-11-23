@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Распознавание речи</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+</head>
+
+<body>
+    <header>
+        <h1>Распознавание речи в браузере</h1>
+    </header>
+    <main>
+
+        <div id="sr_result">sr result...</div>
+        <div class="grid-container_h1">
+            <div class="grid-item color5" id="microphone_status">Микрофон отключен. Чтобы включить, нажмите кнопку &LongRightArrow; </div>
+            <button id="sr_button"><i class="fas fa-microphone"></i></button>
+            <button id="init_button"><i class="fas fa-undo"></i> Init</button>
+			<div>
+              <label for="manage_well_id">well id</label><br>
+              <input id="manage_well_id" type="number" value="200">
+			  <div class="grid-container-well-control">
+                <button class="temp_button" id="add_well_button">Add well</button>
+				<button class="temp_button" id="remove_well_button">Remove well</button>
+			  </div>
+            </div>
+			<div>
+			<div class="grid-container-equip-control-input">
+			  <div>
+                 <label for="manage_equip_no">no</label><br>
+                 <input id="manage_equip_no" type="number" value="1" min="0" max="100">
+			  </div>
+			  <div>
+			     <label for="manage_equip_type">type</label><br>
+                 <input id="manage_equip_type" type="text" value="Хвостовик" size="10">
+			  </div>
+			  <div>
+			     <label for="manage_equip_weight">вес</label><br>
+                 <input id="manage_equip_weight" type="number" value="150" min="0" max="999999999">
+			  </div>
+			  <div>
+			     <label for="manage_equip_amount">кол</label><br>
+                 <input id="manage_equip_amount" type="number" value="3" min="0" max="999999">
+			  </div>
+            </div>
+			<div class="grid-container-equip-control">
+                <button class="temp_button" id="add_equip_button">Add equip</button>
+				<button class="temp_button" id="remove_equip_button">Remove eq</button>
+		    </div>
+			 </div>
+        </div>
+
+        <div class="grid-container-well-manager">
+            <div class="grid-container-well-list">
+               
+			   <div style="text-align:left; margin:0.2em; color:#2ab83f; font-size: 18px;">Список скважин</div>
+               
+			   <table style="margin:0.2em;" id="well_table">
+                    <tr>
+                        <th>Идентификатор скважины</th>
+                    </tr>
+                    <tr>
+                        <td>1000</td>
+                    </tr>
+                    <tr>
+                        <td>1001</td>
+                    </tr>
+                    <tr>
+                        <td>1002</td>
+                    </tr>
+                </table>
+				
+                <div>
+				    <p class="p-cmd-head">Голосовые команды</p>
+					<p class="p-cmd-item">1. Добавить скважину {#}</p>
+					<p class="p-cmd-sample-item">Например: добавить скважину 1</p>
+					<p class="p-cmd-item">2. Выбрать скважину {#}</p>
+					<p class="p-cmd-sample-item">Например: Выбрать скважину 1</p>
+					<p class="p-cmd-item">3. Удалить скважину {#}</p>
+					<p class="p-cmd-sample-item">Например: удалить скважину 1</p>
+					
+				</div>
+				
+            </div>
+
+            <div class="grid-container-well-descr">
+			     
+				<div style="text-align:left; margin:0.2em; color:#2871bf; font-size: 18px;">Список оборудований со скважины 1000</div>
+			
+                <table style="margin:0.2em;" id="equip_table">
+                    <tr>
+                        <th>#</th>
+                        <th>Тип оборудования</th>
+                        <th>Вес</th>
+                        <th>Количество</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Насос</td>
+                        <td>100</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>НКТ</td>
+                        <td>10</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Хвостовик</td>
+                        <td>2</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+
+                <div style="text-align:left; margin:0.2em; color:#2871bf; font-size: 18px;">
+				  <div style="text-align:left; margin:0.2em; color:#2871bf; font-size: 18px;">Информация о скважине</div>
+				  <div id="manage_well_info" style="border: solid 1.4px #2871bf; border-radius: 4px; color:black; margin:0.2em; padding:1.2em 0.6em;">
+
+                  </div>
+				</div>
+
+                 <div class="grid-container-equip-cmd-descr">
+				    <p class="p-cmd-head">Голосовые команды</p>
+					<p class="p-cmd-item">1. Добавить оборудование {тип}</p>
+					<p class="p-cmd-sample-item">Например: добавить оборудование хвостовик</p>
+					<p class="p-cmd-item">2. Выбрать оборудование {#}</p>
+					<p class="p-cmd-sample-item">Например: Выбрать оборудование 1</p>
+					<p class="p-cmd-item">3. Удалить оборудование {#}</p>
+					<p class="p-cmd-sample-item">Например: удалить оборудование 1</p>
+					<p class="p-cmd-item">4. Тип оборудования {новое наименрвание типа}</p>
+					<p class="p-cmd-sample-item">Например: тип оборудования хвостовик</p>
+					<p class="p-cmd-item">5. Вес оборудования {#}</p>
+					<p class="p-cmd-sample-item">Например: вес оборудования 250</p>
+					<p class="p-cmd-item">6. Количество оборудования {#}</p>
+					<p class="p-cmd-sample-item">Например: количество оборудования 5</p>	
+					<p class="p-cmd-item">7. Добавить информацию {информация о скважине...}</p>
+					<p class="p-cmd-sample-item">* после команды 'Добавить информацию' включается голосовой ввод многострочного текста</p>
+					<p class="p-cmd-item">8. Очистить информацию</p>
+					<p class="p-cmd-sample-item">* очищает информацию о скважине</p>
+					<p class="p-cmd-item">9. Завершить ввод информации</p>
+					<p class="p-cmd-sample-item">* выключает голосовой ввод многострочного текста</p>
+				</div>
+
+                
+            </div>
+        </div>
+
+    </main>
+	
+    <footer>
+        <p>Демонстрация технологии распознавании речи и JSpeech Grammar Format (грамматика для использования в компьютерном распознавании речи)</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
