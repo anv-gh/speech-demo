@@ -516,13 +516,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
                 this.recognition.onerror = function(event) {
                     console.log('SpeechRecognition.onerror ' + event.error);
-					//microphone_status.innerHTML = event.error;
-					
-					microphone_status.innerHTML = "";
-                    const text = event.error;
-                    const s = document.createElement("span");
-                    s.appendChild(text);
-                    microphone_status.appendChild(s);
+					microphone_status.innerHTML = event.error;
                 }
 
                 this.recognition.onaudiostart = function(event) {
