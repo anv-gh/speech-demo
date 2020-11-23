@@ -515,10 +515,14 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
 
                 this.recognition.onerror = function(event) {
-
-                    console.log(event);
                     console.log('SpeechRecognition.onerror ' + event.error);
-					this.microphone_status.innerHTML = event.error;
+					//microphone_status.innerHTML = event.error;
+					
+					microphone_status.innerHTML = "";
+                    const text = event.error;
+                    const s = document.createElement("span");
+                    s.appendChild(text);
+                    microphone_status.appendChild(s);
                 }
 
                 this.recognition.onaudiostart = function(event) {
