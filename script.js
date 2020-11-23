@@ -517,7 +517,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 this.recognition.onerror = function(event) {
 
                     console.log('SpeechRecognition.onerror ' + event.error);
-					this.microphone_status.innerHTML = "Ошибка: " + event.error;
+					this.microphone_status.innerHTML = event.error;
                 }
 
                 this.recognition.onaudiostart = function(event) {
