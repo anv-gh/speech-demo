@@ -353,6 +353,20 @@ window.addEventListener("DOMContentLoaded", () => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
 
+const stop = () => {
+                    listening = false;
+                    sr_button.classList.remove("selected");
+                    this.recognition.stop();
+                    microphone_status.innerHTML = "Микрофон отключен. Чтобы включить, нажмите кнопку &LongRightArrow;";
+                };
+
+                const start = () => {
+                    listening = true;
+                    sr_button.classList.add("selected");
+                    this.recognition.start();
+                    microphone_status.innerHTML = "Микрофон включен. Чтобы выключить, нажмите кнопку &LongRightArrow;";
+                };
+				
             const commands = {
                 "добавить скважину": skw_id => {
                     if (skw_id != null) well_manager.AddWell(parseInt(skw_id, 10))
@@ -372,27 +386,30 @@ window.addEventListener("DOMContentLoaded", () => {
                 "удалить оборудование": equip_no => {
                     if (equip_no != null) well_manager.RemoveEquip(parseInt(equip_no, 10))
                 },
-                "тип оборудования": equip_type => {
+                "изменить наименование на": equip_type => {
                     if (equip_type != null) well_manager.Change_EquipType(equip_type)
                 },
-                "вес оборудования": weight => {
+                "изменить вес на": weight => {
                     if (weight != null) well_manager.Change_Weight(parseFloat(weight.replace(' ', '').replace(',', '.')))
                 },
-                "количество оборудования": quantity => {
+                "изменить количество на": quantity => {
                     if (quantity != null) well_manager.Change_Quantity(parseInt(quantity, 10))
                 },
-                "добавить информацию": () => {
+                "редактировать": () => {
                     this.LongSpeechMode = true;
                     manage_well_info.classList.add("selected");
                 },
-                "очистить информацию": () => {
+                "очистить редактор": () => {
                     if (this.LongSpeechMode) well_manager.ClearInfo();
                 },
-                "завершить ввод информации": () => {
+                "завершить редактировать": () => {
                     this.LongSpeechMode = false;
                     manage_well_info.classList.remove("selected");
                     well_manager.GenerateWellInfo();
-                }
+                },
+				"выключить микрофон": () => {
+                    stop();
+                },
             };
 
             const reset_cmd = () => {
@@ -405,14 +422,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
             if (typeof SpeechRecognition !== "undefined") {
 
-                this.colors = ['белый', 'красный', 'зеленый', 'синий', 'черный', 'коричневый'];
-                this.grammar = '#JSGF V1.0; grammar colors; public <color> = ' + this.colors.join(' | ') + ' ;'
-                this.grammar = `#JSGF V1.0;
-grammar answer; 
-
-public <answer> = (да|нет|выход|ноль|один|два|три|четыре|пять|шесть|семь|восемь|девять|десять);"`
-
-
+                this.actions = ['добавить', 'выбрать', 'удалить', 'изменить', 'редактировать', 'очистить', 'завершить', 'выключить'];
+                this.objects = ['скважину', 'оборудование', 'наименование на', 'вес на', 'количество на', 'информацию', 'редактировать', 'микрофон'];
+                this.grammar = '#JSGF V1.0; grammar well_manager; <action> = ' + this.actions.join(' | ') + ' ; <object> = ' + this.objects.join(' | ') + ' ; public <query> = <action> <object>;'
                 this.recognition = new SpeechRecognition();
                 this.speechRecognitionList = new SpeechGrammarList();
                 this.speechRecognitionList.addFromString(this.grammar, 1);
@@ -421,8 +433,6 @@ public <answer> = (да|нет|выход|ноль|один|два|три|чет
                 this.recognition.continuous = true;
                 this.recognition.interimResults = true;
                 this.recognition.maxAlternatives = 1;
-
-                console.log(this.grammar);
 
                 const onResult = event => {
 
@@ -558,21 +568,6 @@ public <answer> = (да|нет|выход|ноль|один|два|три|чет
                     //Fired when the speech recognition service has begun listening to incoming audio with intent to recognize grammars associated with the current SpeechRecognition.
                     console.log('SpeechRecognition.onstart');
                 }
-
-
-                const stop = () => {
-                    listening = false;
-                    sr_button.classList.remove("selected");
-                    this.recognition.stop();
-                    microphone_status.innerHTML = "Микрофон отключен. Чтобы включить, нажмите кнопку &LongRightArrow;";
-                };
-
-                const start = () => {
-                    listening = true;
-                    sr_button.classList.add("selected");
-                    this.recognition.start();
-                    microphone_status.innerHTML = "Микрофон включен. Чтобы выключить, нажмите кнопку &LongRightArrow;";
-                };
 
                 sr_button.addEventListener("click", event => {
                     listening ? stop() : start();
