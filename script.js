@@ -2,31 +2,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const sr_button = document.getElementById("sr_button");
     const microphone_status = document.getElementById("microphone_status");
-    const init_button = document.getElementById("init_button");
     const well_list_div = document.getElementById("well_list_div");
-    const sr_result = document.getElementById("sr_result");
-
-    const add_well_button = document.getElementById("add_well_button");
-    const remove_well_button = document.getElementById("remove_well_button");
-    const manage_well_id = document.getElementById("manage_well_id");
-
-    const add_equip_button = document.getElementById("add_equip_button");
-    const remove_equip_button = document.getElementById("remove_equip_button");
-    const manage_equip_no = document.getElementById("manage_equip_no");
-    const manage_equip_type = document.getElementById("manage_equip_type");
-    const manage_equip_weight = document.getElementById("manage_equip_weight");
-    const manage_equip_amount = document.getElementById("manage_equip_amount");
+    const sr_error = document.getElementById("sr_error");
+	const sr_confidence = document.getElementById("sr_confidence");
+	const sr_result = document.getElementById("sr_result");
     const manage_well_info = document.getElementById("manage_well_info");
-
-
+    const grid_well_descr = document.getElementById("grid_well_descr");
+    const well_eq_descr = document.getElementById("well_eq_descr");
+    const well_info_descr = document.getElementById("well_info_descr");
+	
     class Equipment {
         constructor(EquipType, Weight, Amount) {
             this.EquipType = EquipType;
             this.Weight = Weight;
             this.Amount = Amount;
-        }
-        display() {
-            console.log(this.EquipType, this.Weight, this.Amount);
         }
     }
 
@@ -34,9 +23,6 @@ window.addEventListener("DOMContentLoaded", () => {
         constructor(Id) {
             this.Id = Id;
             this.Note = ""
-        }
-        display() {
-            console.log(EquipType, this.Weight, this.Amount);
         }
     }
 
@@ -83,10 +69,6 @@ window.addEventListener("DOMContentLoaded", () => {
                 this.well_list[i].EquipmentList.push(new Equipment("НКТ", (i + 1) * 100, (i + 1) * 1));
                 this.well_list[i].EquipmentList.push(new Equipment("НКТ", (i + 1) * 200, (i + 1) * 2));
                 this.well_list[i].EquipmentList.push(new Equipment("НКТ", (i + 1) * 300, (i + 1) * 3));
-                console.log(this.well_list[i].Id);
-                for (var k = 0; k < this.well_list[i].EquipmentList.length; k++)
-                    this.well_list[i].EquipmentList[k].display();
-                console.log(this.well_list[i].Note);
             }
 
             this.GenerateWellList();
@@ -127,8 +109,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
             if (well.length == 0) {
                 equip_table.innerHTML = 'No data';
+				grid_well_descr.style.visibility='hidden' 
                 return;
             }
+
+			 grid_well_descr.style.visibility='visible'
+			 well_eq_descr.innerHTML = 'Список оборудований со скважины ' + well_Id;
+             well_info_descr.innerHTML = 'Информация о скважине ' + well_Id;  
 
             let listElement = document.createElement('tr'),
                 numberOfListItems = well[0].EquipmentList == null ? 0 : well[0].EquipmentList.length,
@@ -342,21 +329,12 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     class SpeechRecogManager {
-        constructor(well_manager, speech_recog_button, microphone_status) {
-            this.well_manager = well_manager;
-            this.speech_recog_button = speech_recog_button;
-            this.microphone_status = microphone_status;
-            this.listening = false;
+        constructor() {
             this.LongSpeechMode = false;
 
             this.SpeechAPI_Init();
 
         }
-
-        navigateTo(destination) {
-
-        }
-
 
         SpeechAPI_Init() {
 
@@ -364,34 +342,33 @@ window.addEventListener("DOMContentLoaded", () => {
             const SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList;
 
             const commands = {
-                "добавить скважину": skw_id => { if (skw_id != null) this.well_manager.AddWell(parseInt(skw_id, 10))},
-                "выбрать скважину": skw_id => { if (skw_id != null) this.well_manager.SetActiveWellId(parseInt(skw_id, 10))},
-                "удалить скважину": skw_id => { if (skw_id != null) this.well_manager.RemoveWell(parseInt(skw_id, 10))},
-                "добавить оборудование": equip_type => { if (equip_type != null) this.well_manager.AddEquip(equip_type, 0, 0)},
-                "выбрать оборудование": equip_no => { if (equip_no != null) this.well_manager.SetActiveEquipment(parseInt(equip_no, 10))},
-                "удалить оборудование": equip_no => { if (equip_no != null) this.well_manager.RemoveEquip(parseInt(equip_no, 10))},
-                "тип оборудования": equip_type => { if (equip_type != null) this.well_manager.Change_EquipType(equip_type)},
-                "вес оборудования": weight => { if (weight != null) this.well_manager.Change_Weight(parseFloat(weight.replace(' ', '').replace(',', '.')))},
-                "количество оборудования": quantity => { if (quantity != null) this.well_manager.Change_Quantity(parseInt(quantity, 10))},
+                "добавить скважину": skw_id => { if (skw_id != null) well_manager.AddWell(parseInt(skw_id, 10))},
+                "выбрать скважину": skw_id => { if (skw_id != null) well_manager.SetActiveWellId(parseInt(skw_id, 10))},
+                "удалить скважину": skw_id => { if (skw_id != null) well_manager.RemoveWell(parseInt(skw_id, 10))},
+                "добавить оборудование": equip_type => { if (equip_type != null) well_manager.AddEquip(equip_type, 0, 0)},
+                "выбрать оборудование": equip_no => { if (equip_no != null) well_manager.SetActiveEquipment(parseInt(equip_no, 10))},
+                "удалить оборудование": equip_no => { if (equip_no != null) well_manager.RemoveEquip(parseInt(equip_no, 10))},
+                "тип оборудования": equip_type => { if (equip_type != null) well_manager.Change_EquipType(equip_type)},
+                "вес оборудования": weight => { if (weight != null) well_manager.Change_Weight(parseFloat(weight.replace(' ', '').replace(',', '.')))},
+                "количество оборудования": quantity => { if (quantity != null) well_manager.Change_Quantity(parseInt(quantity, 10))},
                 "добавить информацию": () => {
                     this.LongSpeechMode = true;
                     this.recognition.interimResults = true;
                     manage_well_info.classList.add("selected");
                 },
                 "очистить информацию": () => {
-                    if (this.LongSpeechMode) this.well_manager.ClearInfo();
+                    if (this.LongSpeechMode) well_manager.ClearInfo();
                 },
                 "завершить ввод информации": () => {
                     this.LongSpeechMode = false;
                     this.recognition.interimResults = true;
                     manage_well_info.classList.remove("selected");
-                    this.well_manager.GenerateWellInfo();
-                },
-                "go to": destination => navigateTo(destination)
+                    well_manager.GenerateWellInfo();
+                }
             };
 
             const reset_cmd = () => {
-				if(this.listening){
+				if(listening){
 					this.recognition.abort();
 					this.recognition.start();
 				}
@@ -424,12 +401,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
                     if (event.results[event.results.length - 1].isFinal) {
-                        sr_result.innerHTML = "";
-                        const text = document.createTextNode(transcript);
-                        const s = document.createElement("span");
-                        s.appendChild(text);
-                        s.classList.add("final");
-                        sr_result.appendChild(s);
+                        sr_result.innerHTML = transcript;
+						sr_result.classList.add("final");
+						
+						sr_confidence.innerHTML = (event.results[event.results.length - 1][0].confidence * 100).toFixed(2)+"%";
+						
+						sr_error.innerHTML = "Нет ошибок";
+				   	    sr_error.classList.remove("error");
+					
+						if(event.results[event.results.length - 1][0].confidence > 0.80)
+							sr_confidence.classList.add("conf_ok");
+						else if(event.results[event.results.length - 1][0].confidence > 0.65)
+							sr_confidence.classList.add("conf_normal");
+						else
+							sr_confidence.classList.add("conf_bad");
 
                     } else {
 
@@ -472,10 +457,10 @@ window.addEventListener("DOMContentLoaded", () => {
                         manage_well_info.innerHTML = "";
 
                         if (event.results[event.results.length - 1].isFinal & cmd_detected == false)
-                            this.well_manager.AddInfo(event.results[event.results.length - 1][0].transcript);
+                            well_manager.AddInfo(event.results[event.results.length - 1][0].transcript);
 
                         // Add final speech results
-                        const text = document.createTextNode(this.well_manager.GetInfo());
+                        const text = document.createTextNode(well_manager.GetInfo());
                         const s = document.createElement("span");
                         s.classList.add("final");
                         s.appendChild(text);
@@ -493,19 +478,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
                         }
                     }
-
-                    /*
-                    sr_result.innerHTML = "";
-                    for (const res of event.results) {
-                        const text = document.createTextNode(res[0].transcript);
-                        const p = document.createElement("p");
-                        if (res.isFinal) {
-                            p.classList.add("final");
-							console.log('Confidence: ' + res[0].confidence);
-                        }
-                        p.appendChild(text);
-                        sr_result.appendChild(p);
-                    }*/
                 };
 
                 this.recognition.addEventListener("result", onResult);
@@ -516,7 +488,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
                 this.recognition.onerror = function(event) {
                     console.log('SpeechRecognition.onerror ' + event.error);
-					microphone_status.innerHTML = event.error;
+					sr_error.innerHTML = event.error;
+					sr_error.classList.add("error");
                 }
 
                 this.recognition.onaudiostart = function(event) {
@@ -563,84 +536,37 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
                 const stop = () => {
-                    this.listening = false;
-                    this.speech_recog_button.classList.remove("selected");
+                    listening = false;
+                    sr_button.classList.remove("selected");
                     this.recognition.stop();
-                    this.microphone_status.innerHTML = "Микрофон отключен. Чтобы включить, нажмите кнопку &LongRightArrow;";
+                    microphone_status.innerHTML = "Микрофон отключен. Чтобы включить, нажмите кнопку &LongRightArrow;";
                     //sr_button.textContent = "Start listening";
                 };
 
                 const start = () => {
-                    this.listening = true;
-                    this.speech_recog_button.classList.add("selected");
+                    listening = true;
+                    sr_button.classList.add("selected");
                     this.recognition.start();
-                    this.microphone_status.innerHTML = "Микрофон включен. Чтобы выключить, нажмите кнопку &LongRightArrow;";
-                    //this.speech_recog_button.textContent = "Stop listening";
+                    microphone_status.innerHTML = "Микрофон включен. Чтобы выключить, нажмите кнопку &LongRightArrow;";
+                    //sr_button.textContent = "Stop listening";
                 };
 
-                this.speech_recog_button.addEventListener("click", event => {
-                    this.listening ? stop() : start();
+                sr_button.addEventListener("click", event => {
+                    listening ? stop() : start();
                 });
 
 
 
             } else {
-                this.speech_recog_button.remove();
-                this.microphone_status.innerHTML = "Ваш браузер не поддерживает распознавание речи.";
+                sr_button.remove();
+                microphone_status.innerHTML = "Ваш браузер не поддерживает распознавание речи.";
             }
 
         }
     }
 
-    function Well_Reset() {
-        well_manager.Init();
-    }
-
-    function AddWell_Manually() {
-        let well_id = document.getElementById("manage_well_id");
-        const parsed_int = parseInt(well_id.value);
-
-        if (isNaN(parsed_int) == false)
-            well_manager.AddWell(parsed_int);
-    }
-
-    function RemoveWell_Manually() {
-        let well_id = document.getElementById("manage_well_id");
-        const parsed_int = parseInt(well_id.value);
-
-        if (isNaN(parsed_int) == false)
-            well_manager.RemoveWell(parsed_int);
-    }
-
-    function AddEquip_Manually() {
-
-        let equip_type = document.getElementById("manage_equip_type");
-
-        let equip_weight = document.getElementById("manage_equip_weight");
-        const parsed_equip_weight = parseInt(equip_weight.value);
-
-        let equip_amount = document.getElementById("manage_equip_amount");
-        const parsed_equip_amount = parseInt(equip_amount.value);
-
-        well_manager.AddEquip(equip_type.value, parsed_equip_weight, parsed_equip_amount);
-    }
-
-    function RemoveEquip_Manually() {
-
-        let equip_no = document.getElementById("manage_equip_no");
-        const parsed_equip_no = parseInt(equip_no.value);
-
-        if (isNaN(parsed_equip_no) == false)
-            well_manager.RemoveEquip(parsed_equip_no);
-    }
-
+    let listening = false;
     let well_manager = new WellManager();
-    let speech_manager = new SpeechRecogManager(well_manager, sr_button, microphone_status);
-
-    init_button.addEventListener("click", Well_Reset);
-    add_well_button.addEventListener("click", AddWell_Manually);
-    remove_well_button.addEventListener("click", RemoveWell_Manually);
-    add_equip_button.addEventListener("click", AddEquip_Manually);
-    remove_equip_button.addEventListener("click", RemoveEquip_Manually);
+    let speech_manager = new SpeechRecogManager();
 
 });
