@@ -369,22 +369,22 @@ const stop = () => {
                 };
 				
             const commands = {
-                "добавить скважину": skw_id => {
+                "добавить скважину номер": skw_id => {
                     if (skw_id != null) well_manager.AddWell(parseInt(skw_id, 10))
                 },
-                "выбрать скважину": skw_id => {
+                "выбрать скважину номер": skw_id => {
                     if (skw_id != null) well_manager.SetActiveWellId(parseInt(skw_id, 10))
                 },
-                "удалить скважину": skw_id => {
+                "удалить скважину номер": skw_id => {
                     if (skw_id != null) well_manager.RemoveWell(parseInt(skw_id, 10))
                 },
                 "добавить оборудование": equip_type => {
                     if (equip_type != null) well_manager.AddEquip(equip_type, 0, 0)
                 },
-                "выбрать оборудование": equip_no => {
+                "выбрать оборудование номер": equip_no => {
                     if (equip_no != null) well_manager.SetActiveEquipment(parseInt(equip_no, 10))
                 },
-                "удалить оборудование": equip_no => {
+                "удалить оборудование номер": equip_no => {
                     if (equip_no != null) well_manager.RemoveEquip(parseInt(equip_no, 10))
                 },
                 "изменить наименование на": equip_type => {
