@@ -71,9 +71,9 @@ window.addEventListener("DOMContentLoaded", () => {
             ];
 
             this.well_list = [];
-            this.well_list.push(new Well(1));
-            this.well_list.push(new Well(2));
-            this.well_list.push(new Well(3));
+            this.well_list.push(new Well(100));
+            this.well_list.push(new Well(101));
+            this.well_list.push(new Well(102));
 
             for (var i = 0; i < this.well_list.length; i++) {
                 this.well_list[i].EquipmentList = new Array();
@@ -85,7 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             this.GenerateWellList();
 
-            this.SetActiveWellId(this.well_list[1].Id);
+            this.SetActiveWellId(this.well_list[0].Id);
         }
 
         GenerateWellList() {
@@ -139,7 +139,7 @@ window.addEventListener("DOMContentLoaded", () => {
             listElement.appendChild(listItem);
 
             listItem = document.createElement('th');
-            listItem.innerHTML = "Тип оборудования";
+            listItem.innerHTML = "Наименование";
             listElement.appendChild(listItem);
 
             listItem = document.createElement('th');
@@ -308,6 +308,7 @@ window.addEventListener("DOMContentLoaded", () => {
                     this.well_list[index].EquipmentList.splice((equip_no - 1), 1); // Delete 1 element begining from index
 
                     this.GenerateEquipmentList(this.Selected_Well_Id);
+					this.SetActiveEquipment(this.Selected_EquipmNo);
                 }
             }
         }
