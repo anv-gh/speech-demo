@@ -381,10 +381,10 @@ const stop = () => {
                 "добавить оборудование": equip_type => {
                     if (equip_type != null) well_manager.AddEquip(equip_type, 0, 0)
                 },
-                "выбрать оборудование номер": equip_no => {
+                "выбрать оборудование": equip_no => {
                     if (equip_no != null) well_manager.SetActiveEquipment(parseInt(equip_no, 10))
                 },
-                "удалить оборудование номер": equip_no => {
+                "удалить оборудование": equip_no => {
                     if (equip_no != null) well_manager.RemoveEquip(parseInt(equip_no, 10))
                 },
                 "изменить наименование на": equip_type => {
